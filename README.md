@@ -1,4 +1,5 @@
 # Charmer
+**Charmer** is a ultra-fast, low-false-positive AI breach detection engine. It combines Go's low-latency stream processing with local Small Language Models (SLMs) via Python to evaluate suspicious log events in real-time.
 
 ## Features
 
