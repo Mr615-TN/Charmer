@@ -1,0 +1,14 @@
+[Unit]
+Description=Charmer AI Breach Detection Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/charmer
+ExecStart=/opt/charmer/bin/charmerd /var/log/auth.log
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
