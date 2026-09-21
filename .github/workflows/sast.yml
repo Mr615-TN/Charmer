@@ -1,0 +1,42 @@
+name: Multi-Language SAST & Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  go-security:
+    name: Go Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Run govulncheck (Go vulnerability scanner)
+        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
+  python-security:
+    name: Python Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Bandit (Python SAST)
+        run: |
+          pip install bandit
+          bandit -r ./engine -ll
+
+  secret-scan:
+    name: Secret & Dependency Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Semgrep Cross-Language SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: p/default
