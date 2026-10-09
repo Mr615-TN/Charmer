@@ -15,8 +15,10 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
-      - name: Run govulncheck (Go vulnerability scanner)
-        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+      - name: Run govulncheck
+        uses: golang/govulncheck-action@v1
+        with:
+          go-version-input: '1.22'
 
   python-security:
     name: Python Security Analysis
@@ -29,14 +31,14 @@ jobs:
       - name: Run Bandit (Python SAST)
         run: |
           pip install bandit
-          bandit -r ./engine -ll
+          bandit -r . -ll
 
   secret-scan:
     name: Secret & Dependency Scan
     runs-on: ubuntu-latest
+    container:
+      image: returntocorp/semgrep
     steps:
       - uses: actions/checkout@v4
       - name: Semgrep Cross-Language SAST
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: p/default
+        run: semgrep ci --config=p/default

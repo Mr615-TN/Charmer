@@ -16,16 +16,20 @@ jobs:
         run: |
           docker build -t charmerd:test -f Dockerfile.charmerd .
           docker run -d --name charmerd-instance -p 8080:8080 charmerd:test
-          sleep 5
+
+      - name: Wait for API Readiness
+        run: |
+          timeout 30s bash -c 'until curl -s http://localhost:8080/ > /dev/null; do sleep 1; done' || true
 
       - name: Run Security / DAST Scan against Daemon API
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@v0.14.0
         with:
           target: 'http://localhost:8080'
+          # Remove rules_file_name if .zap/rules.tsv does not exist in your repo
           rules_file_name: '.zap/rules.tsv'
 
       - name: Cleanup Containers
         if: always()
         run: |
           docker stop charmerd-instance || true
-          docker rm charmerd-instance || true
+          docker rm charmerd-instance || tru
