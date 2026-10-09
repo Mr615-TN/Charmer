@@ -16,7 +16,7 @@ jobs:
         with:
           go-version: '1.26'
       - name: Download Go modules
-        run: go mod download
+        run: GOPROXY=direct go mod download
       - name: Run govulncheck
         uses: golang/govulncheck-action@v1
         with:
