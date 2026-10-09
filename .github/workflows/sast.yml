@@ -19,6 +19,7 @@ jobs:
         uses: golang/govulncheck-action@v1
         with:
           go-version-input: '1.22'
+          check-latest: true
 
   python-security:
     name: Python Security Analysis
