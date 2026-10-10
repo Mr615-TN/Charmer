@@ -22,19 +22,23 @@ type threatMsg Threat
 type model struct {
 	threats []Threat
 	conn    net.Conn
+	scanner *bufio.Scanner
 }
 
-func (m model) Init() tea.Cmd {
+func (m model) waitForThreat() tea.Cmd {
 	return func() tea.Msg {
-		scanner := bufio.NewScanner(m.conn)
-		if scanner.Scan() {
+		if m.scanner.Scan() {
 			var t Threat
-			if err := json.Unmarshal(scanner.Bytes(), &t); err == nil {
+			if err := json.Unmarshal(m.scanner.Bytes(), &t); err == nil {
 				return threatMsg(t)
 			}
 		}
 		return nil
 	}
+}
+
+func (m model) Init() tea.Cmd {
+	return m.waitForThreat()
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -46,7 +50,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case threatMsg:
 		m.threats = append(m.threats, Threat(msg))
-		return m, m.Init()
+		return m, m.waitForThreat()
 	}
 	return m, nil
 }
@@ -72,12 +76,20 @@ func (m model) View() string {
 }
 
 func main() {
-	conn, err := net.Dial("unix", "/tmp/charmer.sock")
+	sockPath := os.Getenv("CHARMER_SOCKET_PATH")
+	if sockPath == "" {
+		sockPath = "/tmp/charmer.sock"
+	}
+
+	conn, err := net.Dial("unix", sockPath)
 	if err != nil {
-		fmt.Println("Charmer daemon isn't running. Please start charmerd first.")
+		fmt.Printf("Charmer daemon isn't running on %s. Please start charmerd first.\n", sockPath)
 		os.Exit(1)
 	}
-	p := tea.NewProgram(model{conn: conn})
+	p := tea.NewProgram(model{
+		conn:    conn,
+		scanner: bufio.NewScanner(conn),
+	})
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error running TUI: %v\n", err)
 		os.Exit(1)

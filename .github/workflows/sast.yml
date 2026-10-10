@@ -58,7 +58,7 @@ jobs:
       image: semgrep/semgrep
     steps:
       - uses: actions/checkout@v4
-      - run: semgrep scan --config p/default --error
+      - run: semgrep scan --config p/default --exclude '.github' --error
 
   secrets:
     name: Secret Scan

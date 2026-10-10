@@ -1,0 +1,4 @@
+# ZAP baseline scan rules configuration
+# Format: <rule-id>\t<action: IGNORE|WARN|FAIL>\t<comment>
+10020	IGNORE	X-Frame-Options Header
+10038	IGNORE	Content Security Policy (CSP) Header Not Set

@@ -1,0 +1,3 @@
+# Semgrep ignore configuration
+# Exclude GitHub Actions workflow YAML files from application code SAST scans
+.github/

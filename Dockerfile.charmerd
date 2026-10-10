@@ -1,0 +1,35 @@
+# Stage 1: Build Go daemon
+FROM golang:1.22-bookworm AS builder
+
+WORKDIR /build
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY cmd/ cmd/
+COPY pkg/ pkg/
+RUN CGO_ENABLED=0 GOOS=linux go build -o charmerd ./cmd/charmerd
+
+# Stage 2: Runtime environment with Python
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy binary and engine
+COPY --from=builder /build/charmerd /app/charmerd
+COPY engine/ /app/engine/
+
+# Ensure log directory and log file exist
+RUN mkdir -p /var/log && touch /var/log/auth.log
+
+ENV CHARMER_HTTP_ADDR=":8080"
+ENV CHARMER_SOCKET_PATH="/tmp/charmer.sock"
+ENV CHARMER_ENGINE_PATH="/app/engine/service.py"
+
+EXPOSE 8080
+
+CMD ["/app/charmerd", "/var/log/auth.log"]

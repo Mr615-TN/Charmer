@@ -32,4 +32,5 @@ jobs:
         if: always()
         run: |
           docker stop charmerd-instance || true
-          docker rm charmerd-instance || tru
+          docker rm charmerd-instance || true
+

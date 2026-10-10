@@ -41,8 +41,11 @@ def process_log(log_line: str) -> dict:
         return {"is_true_positive": False, "confidence_score": 0.0, "attack_type": "Error", "explanation": str(e)}
 
 if __name__ == "__main__":
-    for line in sys.stdin:
-        line = line.strip()
-        if line:
-            result = process_log(line)
-            print(json.dumps(result), flush=True)
+    for raw_line in sys.stdin:
+        line = raw_line.strip()
+        if not line:
+            print(json.dumps({"is_true_positive": False, "confidence_score": 0.0, "attack_type": "None", "explanation": "Empty line"}), flush=True)
+            continue
+        result = process_log(line)
+        print(json.dumps(result), flush=True)
+
