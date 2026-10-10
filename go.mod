@@ -1,4 +1,4 @@
-module github.com/tanishneema/charmer
+module github.com/Mr615-TN/charmer
 
 go 1.22
 
