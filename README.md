@@ -34,8 +34,8 @@ pip install -r requirements.txt
 ## Installation
 
 ```bash
-git clone https://github.com/tanishneema/charmer.git
-cd charmer
+git clone https://github.com/Mr615-TN/Charmer.git
+cd Charmer
 
 # Build binaries
 go build -o bin/charmerd ./cmd/charmerd
