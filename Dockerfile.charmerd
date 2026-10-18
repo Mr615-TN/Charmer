@@ -19,9 +19,10 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy binary and engine
+# Copy binary, engine, and pkg
 COPY --from=builder /build/charmerd /app/charmerd
 COPY engine/ /app/engine/
+COPY pkg/ /app/pkg/
 
 # Ensure log directory and log file exist
 RUN mkdir -p /var/log && touch /var/log/auth.log

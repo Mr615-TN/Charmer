@@ -49,7 +49,7 @@ jobs:
           python-version: '3.11'
           cache: pip
       - run: pip install bandit
-      - run: bandit -r engine -ll   # change to your Python dir
+      - run: bandit -r engine pkg -ll
 
   semgrep:
     name: Semgrep SAST
