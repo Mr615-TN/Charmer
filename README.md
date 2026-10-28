@@ -102,7 +102,23 @@ echo "Oct 18 12:00:01 server CRON[123]: (root) CMD (/backup.sh)" | python3 engin
 
 ### 3. End-to-End Live Simulation
 
-Simulate full event streaming between the daemon, Python engine, and TUI using a local test log:
+Simulate full event streaming between the daemon, Python engine, and TUI using a local test log.
+
+#### Automated Simulation Runner
+
+Run the automated live simulation suite, which provisions an isolated socket, starts the daemon, attaches an IPC subscriber, injects benign and threat events, and validates real-time alerts and HTTP API metrics:
+
+```bash
+# Automated live simulation runner
+./scripts/run_e2e_simulation.sh
+
+# Or run via Python unittest
+python3 -m unittest tests/test_e2e_live.py -v
+```
+
+#### Manual Interactive Simulation
+
+To step through manually across multiple terminal windows:
 
 1. **Start the daemon on a test log and isolated socket:**
    ```bash

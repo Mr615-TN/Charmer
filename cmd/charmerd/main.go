@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 	"sync"
 	"time"
 
@@ -204,7 +205,11 @@ func main() {
 	if pyIn != nil && pyOut != nil {
 		outScanner := bufio.NewScanner(pyOut)
 		for line := range lines {
-			_, _ = io.WriteString(pyIn, line+"\n")
+			trimmed := strings.TrimRight(line, "\r\n")
+			if strings.TrimSpace(trimmed) == "" {
+				continue
+			}
+			_, _ = io.WriteString(pyIn, trimmed+"\n")
 			if outScanner.Scan() {
 				var t Threat
 				if err := json.Unmarshal(outScanner.Bytes(), &t); err == nil && t.IsTruePositive {
